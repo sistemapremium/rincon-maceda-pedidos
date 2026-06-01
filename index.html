@@ -71,7 +71,7 @@ function render(){
     const cant=carrito[p.cod]?carrito[p.cod].qty:0;
     const d=document.createElement("div");d.className="prod";
     d.innerHTML="<div class=ico>"+(ICON[p.rubro]||ICON['Otros'])+"</div>"+
-      "<div class=info><div class=nom>"+p.nom+"</div><div class=meta>"+(p.marca||"")+" &middot; cod "+p.cod+"</div></div>"+
+      "<div class=info><div class=nom>"+p.nom+"</div><div class=meta>cod "+p.cod+"</div></div>"+
       "<div class=precio>"+fmt(p.precio)+"</div>"+
       "<div class=qty><button onclick=\"cambiar('"+p.cod+"',-1)\">-</button><span id=q_"+p.cod+">"+cant+"</span><button class=add onclick=\"cambiar('"+p.cod+"',1)\">+</button></div>";
     lista.appendChild(d);});
