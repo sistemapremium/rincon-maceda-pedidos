@@ -42,6 +42,11 @@ header .sub{color:var(--grass);font-size:12px;margin-top:2px;letter-spacing:1px;
 .ico{width:54px;height:54px;border-radius:12px;background:#fbf8f3;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #ece4d7;color:var(--grass);overflow:hidden}
 .ico svg{width:24px;height:24px}
 .ico img.foto{width:100%;height:100%;object-fit:contain;background:#fff}
+.adminbtn{position:fixed;left:8px;bottom:8px;z-index:50;background:rgba(70,76,50,.18);color:#7c876a;border:none;border-radius:14px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;opacity:.5}
+.adminbtn:hover{opacity:1}
+.adminbtn.on{background:var(--earth);color:#fff;opacity:1}
+.subirfoto{background:#fff;border:1px solid var(--earth);color:var(--earth);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;flex-shrink:0;margin-right:4px}
+.subirfoto:hover{background:var(--earth);color:#fff}
 .info{flex:1;min-width:0}.nom{font-weight:700;font-size:14px;line-height:1.25;color:var(--jungle)}
 .meta{color:var(--grass);font-size:12px;margin-top:2px}.precio{color:var(--earth);font-weight:800;font-size:15px;white-space:nowrap}
 .qty{display:flex;align-items:center;gap:6px}
@@ -83,6 +88,7 @@ const PRODUCTOS=[{"cod": "4182", "nom": "Yogur Griego x 750gr - Kay", "marca": "
 const ICON={"Keto / Low Carb": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M5 19c0-7 6-13 14-14 1 8-5 15-14 14Z'/><path d='M5 19c3-5 7-8 11-9'/></svg>", "Proteinas y Suplementos": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12'/></svg>", "Aceites": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M10 3h4v3l1 2v11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8l1-2Z'/><path d='M10 12h4'/></svg>", "Vinagres y Aderezos": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M10 3h4v3l1 2v11a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8l1-2Z'/><path d='M10 12h4'/></svg>", "Aceitunas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='10.5' cy='14.5' rx='5.5' ry='6.5'/><path d='M13 8c2-3 5-4 7-4 0 3-2 5-5 5'/></svg>", "Conservas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='8' width='12' height='12' rx='2'/><path d='M8 8V6h8v2M8 12h8'/></svg>", "Frutos Secos": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3c5 3 7 9 4 14-4 5-9 3-9-3 0-5 2-9 5-11Z'/><path d='M12 5c0 5 0 11 0 14'/></svg>", "Semillas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21v-9'/><path d='M12 12C9 12 7 10 7 7c3 0 5 2 5 5Z'/><path d='M12 12c3 0 5-2 5-5-3 0-5 2-5 5Z'/></svg>", "Frutas Secas y Deshidratadas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='14' r='6'/><path d='M12 8c0-3 2-5 4-5'/></svg>", "Cereales, Granolas y Avena": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 11h18a9 8 0 0 1-18 0Z'/><path d='M8 7c1-1 2-1 3 0M13 6c1-1 2-1 3 0'/></svg>", "Harinas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21V7'/><path d='M12 9c2-2 4-2 5-1-1 3-3 3-5 1ZM12 9c-2-2-4-2-5-1 1 3 3 3 5 1ZM12 13c2-2 4-2 5-1-1 3-3 3-5 1ZM12 13c-2-2-4-2-5-1 1 3 3 3 5 1Z'/></svg>", "Premezclas y Reposteria seca": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 11h12l-1 8H7Z'/><path d='M6 11a6 3.5 0 0 1 12 0'/><path d='M12 4v3'/></svg>", "Panificados": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M4 13a8 5 0 0 1 16 0v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z'/><path d='M8 13v4M12 13v4M16 13v4'/></svg>", "Reposteria, Tortas y Postres": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 11h12l-1 8H7Z'/><path d='M6 11a6 3.5 0 0 1 12 0'/><path d='M12 4v3'/></svg>", "Snacks y Chips": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M7 8h10l1 12H6Z'/><path d='M9 8a3 3 0 0 1 6 0'/></svg>", "Barras, Turrones y Golosinas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='8' width='16' height='8' rx='2'/><path d='M9 8v8M14 8v8'/></svg>", "Chocolates y Cacao": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><rect x='5' y='6' width='14' height='12' rx='1.5'/><path d='M5 12h14M9.3 6v12M14.6 6v12'/></svg>", "Yogures": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='8' width='12' height='12' rx='2'/><path d='M8 8V6h8v2M8 12h8'/></svg>", "Quesos": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M4 16l13-6 3 6Z'/><circle cx='14' cy='13.5' r='.6'/><circle cx='10' cy='14.5' r='.6'/></svg>", "Lacteos y Huevos": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11Z'/></svg>", "Dulces, Mermeladas y Untables": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='8' width='12' height='12' rx='2'/><path d='M8 8V6h8v2M8 12h8'/></svg>", "Endulzantes y Miel": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11Z'/></svg>", "Te e Infusiones": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M5 8h12v6a5 5 0 0 1-10 0Z'/><path d='M17 9h2a2 2 0 0 1 0 4h-2'/><path d='M9 3c-1 1-1 2 0 3M13 3c-1 1-1 2 0 3'/></svg>", "Mate y Yerba": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='14.5' r='5.5'/><path d='M14.5 10l4.5-5'/></svg>", "Cafe": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M5 8h12v6a5 5 0 0 1-10 0Z'/><path d='M17 9h2a2 2 0 0 1 0 4h-2'/><path d='M9 3c-1 1-1 2 0 3M13 3c-1 1-1 2 0 3'/></svg>", "Bebidas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M7 4h10l-1.2 16H8.2Z'/><path d='M7.3 9h9.4'/></svg>", "Legumbres": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 11h18a9 8 0 0 1-18 0Z'/><path d='M8 7c1-1 2-1 3 0M13 6c1-1 2-1 3 0'/></svg>", "Arroz y Pastas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M3 11h18a9 8 0 0 1-18 0Z'/><path d='M8 7c1-1 2-1 3 0M13 6c1-1 2-1 3 0'/></svg>", "Condimentos y Especias": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M5 19c0-7 6-13 14-14 1 8-5 15-14 14Z'/><path d='M5 19c3-5 7-8 11-9'/></svg>", "Sal": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M8 9h8v9a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2Z'/><path d='M9 9V6h6v3'/><circle cx='11' cy='13' r='.45'/><circle cx='13.2' cy='14' r='.45'/></svg>", "Cuidado Personal y Cosmetica": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11Z'/></svg>", "Mascotas": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><circle cx='7' cy='9' r='1.5'/><circle cx='12' cy='7.3' r='1.5'/><circle cx='17' cy='9' r='1.5'/><path d='M8 16.5a4 4 0 0 1 8 0c0 2-2 3-4 3s-4-1-4-3Z'/></svg>", "Otros": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4h7l9 9-7 7-9-9Z'/><circle cx='8' cy='8' r='1.2'/></svg>"};
 const carrito={}; let rubroSel="";
 const FAV=new Set(); let currentUser=null;
+const ADMIN_UID='360WPbVS7tXasfWkFBOV3JGIwbl2'; let esAdmin=false; const FOTOS_DB={};
 function togFav(cod,btn){
   if(!currentUser){ pedirLogin(); return; }
   if(FAV.has(cod))FAV.delete(cod);else FAV.add(cod);
@@ -103,9 +109,11 @@ rubros.forEach(r=>chips.appendChild(chip(r+" ("+conteo[r]+")",r)));
 const lista=document.getElementById("lista"),contador=document.getElementById("contador");
 function tarjeta(p){
   const cant=carrito[p.cod]?carrito[p.cod].qty:0;
+  const foto=p.img||FOTOS_DB[p.cod]||null;
   const d=document.createElement("div");d.className="prod";
-  d.innerHTML="<div class=ico>"+(p.img?("<img class=foto src='"+p.img+"'>"):(ICON[p.rubro]||ICON['Otros']))+"</div>"+
-    "<div class=info><div class=nom>"+p.nom+"</div><div class=meta>cod "+p.cod+"</div></div>"+
+  d.innerHTML="<div class=ico>"+(foto?("<img class=foto src='"+foto+"'>"):(ICON[p.rubro]||ICON['Otros']))+"</div>"+
+    "<div class=info><div class=nom>"+p.nom+"</div><div class=meta>cod "+p.cod+(esAdmin?(foto?" · con foto ✓":" · sin foto"):"")+"</div></div>"+
+    (esAdmin?("<button class=subirfoto title='Subir o cambiar foto' onclick=\"subirFoto('"+p.cod+"')\">📷</button>"):"")+
     "<button class='fav"+(FAV.has(p.cod)?" on":"")+"' title='Favorito' onclick=\"togFav('"+p.cod+"',this)\">"+(FAV.has(p.cod)?"♥":"♡")+"</button>"+
     "<div class=precio>"+fmt(p.precio)+"</div>"+
     "<div class=qty><button onclick=\"cambiar('"+p.cod+"',-1)\">-</button><span id=q_"+p.cod+">"+cant+"</span><button class=add onclick=\"cambiar('"+p.cod+"',1)\">+</button></div>";
@@ -176,16 +184,62 @@ const loginBtn=document.getElementById("loginBtn");
 loginBtn.onclick=pedirLogin;
 auth.onAuthStateChanged(async (u)=>{
   currentUser=u;
-  if(u){
-    loginBtn.innerHTML=(u.photoURL?"<img class=uimg src='"+u.photoURL+"'>":"")+(u.displayName?u.displayName.split(" ")[0]:"Salir");
-    loginBtn.onclick=logout;
-    try{ const d=await db.collection("usuarios").doc(u.uid).get(); FAV.clear(); ((d.exists&&d.data().favoritos)||[]).forEach(c=>FAV.add(c)); }catch(e){console.log(e);}
+  esAdmin = !!(u && u.uid===ADMIN_UID);
+  const ab=document.getElementById("adminBtn");
+  if(esAdmin){
+    if(ab){ab.textContent="✓ Modo admin · salir"; ab.classList.add("on");}
+    loginBtn.style.display="none";
   } else {
-    loginBtn.innerHTML="Ingresar"; loginBtn.onclick=pedirLogin; FAV.clear();
+    if(ab){ab.textContent="·"; ab.classList.remove("on");}
+    loginBtn.style.display="";
+    if(u){
+      loginBtn.innerHTML=(u.photoURL?"<img class=uimg src='"+u.photoURL+"'>":"")+(u.displayName?u.displayName.split(" ")[0]:"Salir");
+      loginBtn.onclick=logout;
+      try{ const d=await db.collection("usuarios").doc(u.uid).get(); FAV.clear(); ((d.exists&&d.data().favoritos)||[]).forEach(c=>FAV.add(c)); }catch(e){console.log(e);}
+    } else {
+      loginBtn.innerHTML="Ingresar"; loginBtn.onclick=pedirLogin; FAV.clear();
+    }
   }
   const fc=document.getElementById("favcount"); if(fc)fc.textContent=FAV.size;
   render();
 });
 
+// ---- PANEL ADMIN: subir/cambiar fotos de productos ----
+async function cargarFotos(){
+  try{ const s=await db.collection("fotos").get(); s.forEach(d=>{ const im=d.data().img; if(im) FOTOS_DB[d.id]=im; }); }catch(e){console.log("cargarFotos",e);}
+}
+function loginAdmin(){
+  const em=prompt("Usuario admin:"); if(!em)return;
+  const pw=prompt("Contraseña:"); if(!pw)return;
+  auth.signInWithEmailAndPassword(em.trim(),pw).catch(e=>alert("No pude entrar: "+e.message));
+}
+function subirFoto(cod){
+  const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*";
+  inp.onchange=()=>{
+    const f=inp.files&&inp.files[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      const img=new Image();
+      img.onload=async()=>{
+        const L=600,c=document.createElement("canvas");c.width=L;c.height=L;
+        const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,L,L);
+        const s=Math.min((L-30)/img.width,(L-30)/img.height,1),w=img.width*s,h=img.height*s;
+        ctx.drawImage(img,(L-w)/2,(L-h)/2,w,h);
+        const b64=c.toDataURL("image/jpeg",0.82);
+        try{ await db.collection("fotos").doc(cod).set({img:b64,ts:Date.now()}); FOTOS_DB[cod]=b64; render(); }
+        catch(e){ alert("No se pudo guardar: "+e.message); }
+      };
+      img.onerror=()=>alert("No pude leer esa imagen.");
+      img.src=r.result;
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+const adminBtn=document.createElement("button"); adminBtn.id="adminBtn"; adminBtn.className="adminbtn"; adminBtn.textContent="·"; adminBtn.title="Administrador";
+adminBtn.onclick=()=>{ esAdmin?auth.signOut():loginAdmin(); };
+document.body.appendChild(adminBtn);
+
+cargarFotos().then(render);
 render();upd();
 </script></body></html>
