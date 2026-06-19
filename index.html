@@ -193,7 +193,7 @@ auth.onAuthStateChanged(async (u)=>{
   } else {
     if(ab){ab.textContent="🔑 Entrar a administrar"; ab.classList.remove("on");}
     loginBtn.style.display="";
-    if(u){
+    if(u && u.uid!==ADMIN_UID){
       loginBtn.innerHTML=(u.photoURL?"<img class=uimg src='"+u.photoURL+"'>":"")+(u.displayName?u.displayName.split(" ")[0]:"Salir");
       loginBtn.onclick=logout;
       try{ const d=await db.collection("usuarios").doc(u.uid).get(); FAV.clear(); ((d.exists&&d.data().favoritos)||[]).forEach(c=>FAV.add(c)); }catch(e){console.log(e);}
