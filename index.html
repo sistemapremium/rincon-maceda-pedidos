@@ -210,9 +210,9 @@ async function cargarFotos(){
   try{ const s=await db.collection("fotos").get(); s.forEach(d=>{ const im=d.data().img; if(im) FOTOS_DB[d.id]=im; }); }catch(e){console.log("cargarFotos",e);}
 }
 function loginAdmin(){
-  const em=prompt("Usuario admin:"); if(!em)return;
-  const pw=prompt("Contraseña:"); if(!pw)return;
-  auth.signInWithEmailAndPassword(em.trim(),pw).catch(e=>alert("No pude entrar: "+e.message));
+  const pw=prompt("Contraseña de administrador:"); if(!pw)return;
+  auth.signInWithEmailAndPassword("admin@rinconmaceda.com", (''+pw).trim())
+    .catch(function(e){ alert("No pude entrar: "+(e&&e.message||e)+"\n\nLa contraseña es: rincon2026 (todo junto, en minúscula)"); });
 }
 function subirFoto(cod){
   const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*";
