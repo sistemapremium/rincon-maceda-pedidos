@@ -42,8 +42,8 @@ header .sub{color:var(--grass);font-size:12px;margin-top:2px;letter-spacing:1px;
 .ico{width:54px;height:54px;border-radius:12px;background:#fbf8f3;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #ece4d7;color:var(--grass);overflow:hidden}
 .ico svg{width:24px;height:24px}
 .ico img.foto{width:100%;height:100%;object-fit:contain;background:#fff}
-.adminbtn{position:fixed;left:8px;bottom:8px;z-index:50;background:rgba(70,76,50,.18);color:#7c876a;border:none;border-radius:14px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;opacity:.5}
-.adminbtn:hover{opacity:1}
+.adminbtn{position:fixed;left:10px;bottom:64px;z-index:50;background:var(--jungle);color:#fff;border:none;border-radius:16px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px #0003}
+.adminbtn:hover{opacity:.92}
 .adminbtn.on{background:var(--earth);color:#fff;opacity:1}
 .subirfoto{background:#fff;border:1px solid var(--earth);color:var(--earth);border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer;flex-shrink:0;margin-right:4px}
 .subirfoto:hover{background:var(--earth);color:#fff}
@@ -89,6 +89,7 @@ const ICON={"Keto / Low Carb": "<svg viewBox='0 0 24 24' fill='none' stroke='cur
 const carrito={}; let rubroSel="";
 const FAV=new Set(); let currentUser=null;
 const ADMIN_UID='360WPbVS7tXasfWkFBOV3JGIwbl2'; let esAdmin=false; const FOTOS_DB={};
+const ADMIN_MODE=/[?&#]admin\b/i.test(location.href);  // el panel SOLO aparece en el link con ?admin
 function togFav(cod,btn){
   if(!currentUser){ pedirLogin(); return; }
   if(FAV.has(cod))FAV.delete(cod);else FAV.add(cod);
@@ -184,13 +185,13 @@ const loginBtn=document.getElementById("loginBtn");
 loginBtn.onclick=pedirLogin;
 auth.onAuthStateChanged(async (u)=>{
   currentUser=u;
-  esAdmin = !!(u && u.uid===ADMIN_UID);
+  esAdmin = !!(u && u.uid===ADMIN_UID) && ADMIN_MODE;
   const ab=document.getElementById("adminBtn");
   if(esAdmin){
     if(ab){ab.textContent="✓ Modo admin · salir"; ab.classList.add("on");}
     loginBtn.style.display="none";
   } else {
-    if(ab){ab.textContent="·"; ab.classList.remove("on");}
+    if(ab){ab.textContent="🔑 Entrar a administrar"; ab.classList.remove("on");}
     loginBtn.style.display="";
     if(u){
       loginBtn.innerHTML=(u.photoURL?"<img class=uimg src='"+u.photoURL+"'>":"")+(u.displayName?u.displayName.split(" ")[0]:"Salir");
@@ -236,9 +237,11 @@ function subirFoto(cod){
   };
   inp.click();
 }
-const adminBtn=document.createElement("button"); adminBtn.id="adminBtn"; adminBtn.className="adminbtn"; adminBtn.textContent="·"; adminBtn.title="Administrador";
-adminBtn.onclick=()=>{ esAdmin?auth.signOut():loginAdmin(); };
-document.body.appendChild(adminBtn);
+if(ADMIN_MODE){
+  const adminBtn=document.createElement("button"); adminBtn.id="adminBtn"; adminBtn.className="adminbtn"; adminBtn.textContent="🔑 Entrar a administrar"; adminBtn.title="Administrador";
+  adminBtn.onclick=()=>{ esAdmin?auth.signOut():loginAdmin(); };
+  document.body.appendChild(adminBtn);
+}
 
 cargarFotos().then(render);
 render();upd();
