@@ -370,8 +370,9 @@ if(ADMIN_MODE){
   document.body.appendChild(adminBtn);
 }
 
-function abrirFoto(src){if(!src)return;document.getElementById('lbimg').src=src;document.getElementById('lightbox').classList.add('on');document.body.style.overflow='hidden';}
-function cerrarFoto(){document.getElementById('lightbox').classList.remove('on');document.body.style.overflow='';}
+let lbOpenedAt=0;
+function abrirFoto(src){if(!src)return;lbOpenedAt=Date.now();document.getElementById('lbimg').src=src;document.getElementById('lightbox').classList.add('on');document.body.style.overflow='hidden';}
+function cerrarFoto(){if(Date.now()-lbOpenedAt<400)return;document.getElementById('lightbox').classList.remove('on');document.body.style.overflow='';}
 cargarFotos().then(render);
 render();upd();
 </script></body></html>
