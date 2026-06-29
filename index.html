@@ -270,7 +270,10 @@ function render(){
   }
 }
 function cambiar(cod,d){const p=PRODUCTOS.find(x=>x.cod===cod);const a=carrito[cod]?carrito[cod].qty:0;const n=Math.max(0,a+d);if(n===0)delete carrito[cod];else carrito[cod]={p,qty:n};pintarQty(cod);upd();}
-function upd(){const it=Object.values(carrito);let n=0,t=0;it.forEach(x=>{n+=x.qty;t+=x.qty*x.p.precio;});document.getElementById("nItems").textContent=n;document.getElementById("total").textContent=fmt(t);document.getElementById("enviar").disabled=(n===0);document.getElementById("detalleCarrito").innerHTML=it.map(x=>"<div class=it><span>"+x.qty+" x "+x.p.nom+"</span><span>"+fmt(x.qty*x.p.precio)+"</span></div>").join("");}
+function upd(){const it=Object.values(carrito);let n=0,t=0;it.forEach(x=>{n+=x.qty;t+=x.qty*x.p.precio;});document.getElementById("nItems").textContent=n;document.getElementById("total").textContent=fmt(t);document.getElementById("enviar").disabled=(n===0);document.getElementById("detalleCarrito").innerHTML=it.map(x=>"<div class=it><span>"+x.qty+" x "+x.p.nom+"</span><span>"+fmt(x.qty*x.p.precio)+"</span></div>").join("");logCarrito();}
+function sid(){let s=localStorage.getItem('rm_sid');if(!s){s='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem('rm_sid',s);}return s;}
+let _ctmr=null,_cartEver=false;
+function logCarrito(){clearTimeout(_ctmr);_ctmr=setTimeout(function(){try{const it=Object.values(carrito);if(!it.length&&!_cartEver)return;_cartEver=true;let t=0;const items=it.map(function(x){t+=x.qty*x.p.precio;return {cod:x.p.cod,nom:x.p.nom,qty:x.qty,precio:x.p.precio};});db.collection('carritos').doc(sid()).set({items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:items.length?'abierto':'vacio',nombre:localStorage.getItem('rm_nombre')||'',tel:localStorage.getItem('rm_tel')||'',origen:localStorage.getItem('rm_origen')||'directo',ts:Date.now()},{merge:true}).catch(function(){});}catch(e){}},1500);}
 document.getElementById("verCarrito").onclick=function(){const d=document.getElementById("detalleCarrito");d.style.display=d.style.display==="block"?"none":"block";};
 document.getElementById("buscar").oninput=render;
 document.getElementById("enviar").onclick=abrirPedido;
@@ -284,6 +287,7 @@ async function confirmarPedido(){
   const it=Object.values(carrito);let t=0;const items=it.map(function(x){t+=x.qty*x.p.precio;return {cod:x.p.cod,nom:x.p.nom,qty:x.qty,precio:x.p.precio};});
   let txt="Hola! Soy "+nombre+". Quiero hacer este pedido en Rincon Maceda:\n\n";it.forEach(function(x){txt+="• "+x.qty+" x "+x.p.nom+" - "+fmt(x.qty*x.p.precio)+"\n";});txt+="\nTOTAL: "+fmt(t);
   try{ await db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}); }catch(e){console.log('pedido',e);}
+  try{ db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}); }catch(e){}
   window.open("https://wa.me/"+NUMERO+"?text="+encodeURIComponent(txt),"_blank");
   cerrarPedido();
 }
@@ -345,6 +349,7 @@ auth.onAuthStateChanged(async (u)=>{
     if(u && u.uid!==ADMIN_UID){
       loginBtn.innerHTML=(u.photoURL?"<img class=uimg src='"+u.photoURL+"'>":"")+(u.displayName?u.displayName.split(" ")[0]:"Salir");
       loginBtn.onclick=logout;
+      try{ await db.collection("usuarios").doc(u.uid).set({nombre:u.displayName||'',email:u.email||'',foto:u.photoURL||'',ult:Date.now()},{merge:true}); }catch(e){}
       try{ const d=await db.collection("usuarios").doc(u.uid).get(); FAV.clear(); ((d.exists&&d.data().favoritos)||[]).forEach(c=>FAV.add(c)); }catch(e){console.log(e);}
     } else {
       loginBtn.innerHTML="Ingresar"; loginBtn.onclick=pedirLogin; FAV.clear();
