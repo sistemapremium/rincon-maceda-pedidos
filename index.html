@@ -145,6 +145,18 @@ header .sub{color:var(--light);font-size:11px;margin-top:3px;letter-spacing:.16e
 #verCarrito{color:var(--earth-d);font-weight:700;cursor:pointer;text-decoration:underline}
 #detalleCarrito{max-height:220px;overflow:auto;margin-top:8px;display:none}
 #detalleCarrito .it{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid #efe9df}
+/* ---------- MODAL PEDIDO ---------- */
+.pmodal{display:none;position:fixed;inset:0;background:rgba(20,25,15,.55);z-index:210;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.pmodal.on{display:flex}
+.pmbox{position:relative;background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.4);padding:24px 22px 22px;width:100%;max-width:380px}
+.pmx{position:absolute;top:9px;right:13px;background:none;border:none;font-size:27px;line-height:1;color:var(--mut);cursor:pointer}
+.pmtit{font-family:'Aldo',serif;font-size:23px;color:var(--jungle);margin-bottom:3px}
+.pmsub{color:var(--mut);font-size:13px;margin-bottom:16px}
+.pmbox input{width:100%;padding:13px 14px;border:1.5px solid #dfe3d2;border-radius:12px;font-size:15px;font-family:inherit;color:var(--ink);margin-bottom:11px;outline:none;transition:.15s}
+.pmbox input:focus{border-color:var(--grass);box-shadow:0 0 0 4px rgba(135,150,101,.16)}
+.pmtotal{font-size:15px;color:var(--ink);margin:6px 0 14px}.pmtotal b{font-family:'Aldo',serif;font-size:21px;color:var(--earth-d)}
+.pmbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,#25D366,#1faa54);color:#fff;border:none;padding:15px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(37,211,102,.38)}
+.pmbtn:active{transform:scale(.99)}.pmbtn svg{width:20px;height:20px}
 /* ---------- ACCESIBILIDAD ---------- */
 :focus{outline:none}
 a:focus-visible,button:focus-visible,input:focus-visible,.fav:focus-visible{outline:2.5px solid var(--earth-d);outline-offset:2px;border-radius:10px}
@@ -168,6 +180,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,.fav:focus-visible{outl
   <div id=detalleCarrito></div>
   <button id=enviar disabled><svg viewBox='0 0 24 24' fill='currentColor'><path d='M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.7 14.1c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5-4.5-.2-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.4.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.7-.9c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.4.1.2.1.9-.1 1.6Z'/></svg>Enviar pedido por WhatsApp</button>
 </div>
+<div id=pedidoModal class=pmodal><div class=pmbox>
+  <button class=pmx onclick="cerrarPedido()" aria-label="Cerrar">&times;</button>
+  <div class=pmtit>Confirmá tu pedido</div>
+  <div class=pmsub>Dejanos tu nombre y te lo preparamos 🌿</div>
+  <input id=pmNombre placeholder="Tu nombre *" autocomplete="name">
+  <input id=pmTel placeholder="Tu teléfono (opcional)" inputmode="tel" autocomplete="tel">
+  <div class=pmtotal>Total del pedido: <b id=pmTotal>$ 0</b></div>
+  <button id=pmEnviar class=pmbtn><svg viewBox='0 0 24 24' fill='currentColor'><path d='M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.7 14.1c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5-4.5-.2-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.4.5-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.7-.9c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.4.1.2.1.9-.1 1.6Z'/></svg>Enviar pedido por WhatsApp</button>
+</div></div>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -252,7 +273,22 @@ function cambiar(cod,d){const p=PRODUCTOS.find(x=>x.cod===cod);const a=carrito[c
 function upd(){const it=Object.values(carrito);let n=0,t=0;it.forEach(x=>{n+=x.qty;t+=x.qty*x.p.precio;});document.getElementById("nItems").textContent=n;document.getElementById("total").textContent=fmt(t);document.getElementById("enviar").disabled=(n===0);document.getElementById("detalleCarrito").innerHTML=it.map(x=>"<div class=it><span>"+x.qty+" x "+x.p.nom+"</span><span>"+fmt(x.qty*x.p.precio)+"</span></div>").join("");}
 document.getElementById("verCarrito").onclick=function(){const d=document.getElementById("detalleCarrito");d.style.display=d.style.display==="block"?"none":"block";};
 document.getElementById("buscar").oninput=render;
-document.getElementById("enviar").onclick=function(){const it=Object.values(carrito);if(!it.length)return;let txt="Hola! Quiero hacer este pedido en Rincon Maceda:\n\n";let t=0;it.forEach(x=>{const s=x.qty*x.p.precio;t+=s;txt+="• "+x.qty+" x "+x.p.nom+" - "+fmt(s)+"\n";});txt+="\nTOTAL: "+fmt(t);window.open("https://wa.me/"+NUMERO+"?text="+encodeURIComponent(txt),"_blank");};
+document.getElementById("enviar").onclick=abrirPedido;
+function abrirPedido(){const it=Object.values(carrito);if(!it.length)return;let t=0;it.forEach(x=>t+=x.qty*x.p.precio);document.getElementById('pmTotal').textContent=fmt(t);document.getElementById('pmNombre').value=localStorage.getItem('rm_nombre')||'';document.getElementById('pmTel').value=localStorage.getItem('rm_tel')||'';document.getElementById('pedidoModal').classList.add('on');document.body.style.overflow='hidden';setTimeout(function(){document.getElementById('pmNombre').focus();},120);}
+function cerrarPedido(){document.getElementById('pedidoModal').classList.remove('on');document.body.style.overflow='';}
+async function confirmarPedido(){
+  const nb=document.getElementById('pmNombre');const nombre=nb.value.trim();
+  if(!nombre){nb.style.borderColor='#d9534f';nb.focus();return;}
+  const tel=document.getElementById('pmTel').value.trim();
+  localStorage.setItem('rm_nombre',nombre);localStorage.setItem('rm_tel',tel);
+  const it=Object.values(carrito);let t=0;const items=it.map(function(x){t+=x.qty*x.p.precio;return {cod:x.p.cod,nom:x.p.nom,qty:x.qty,precio:x.p.precio};});
+  let txt="Hola! Soy "+nombre+". Quiero hacer este pedido en Rincon Maceda:\n\n";it.forEach(function(x){txt+="• "+x.qty+" x "+x.p.nom+" - "+fmt(x.qty*x.p.precio)+"\n";});txt+="\nTOTAL: "+fmt(t);
+  try{ await db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}); }catch(e){console.log('pedido',e);}
+  window.open("https://wa.me/"+NUMERO+"?text="+encodeURIComponent(txt),"_blank");
+  cerrarPedido();
+}
+document.getElementById("pmEnviar").onclick=confirmarPedido;
+document.getElementById("pedidoModal").addEventListener("click",function(e){if(e.target.id==='pedidoModal')cerrarPedido();});
 const REVIEWS=[
  {n:"Lorena G.",t:"Excelente, gran atención y un ambiente ideal para conseguir productos, comida y postres sanos y deliciosos. Los súper recomiendo!"},
  {n:"Victoria O.",t:"No solo muy buena variedad de productos, sino que me atendieron impecable! Mucha paciencia y ayuda para buscar lo que necesitaba según mis restricciones alimentarias. Para volver siempre!"},
@@ -281,6 +317,16 @@ const firebaseConfig={apiKey:"AIzaSyBInPQeMu1dCH3leUtCoTZtgbkhrmVXEpI",authDomai
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(), db=firebase.firestore();
 const prov=new firebase.auth.GoogleAuthProvider();
+// ---- contador de visitas + origen (1 por sesion, no bloquea nada) ----
+try{ if(!sessionStorage.getItem('rm_visit')){ sessionStorage.setItem('rm_visit','1');
+  let origen='directo'; const ref=document.referrer||''; const utm=new URLSearchParams(location.search).get('utm_source');
+  if(utm) origen=utm.toLowerCase(); else if(/instagram/i.test(ref)) origen='instagram'; else if(/facebook|fb\./i.test(ref)) origen='facebook'; else if(ref && !/rincon-maceda\.onrender|localhost/i.test(ref)) origen='web';
+  localStorage.setItem('rm_origen',origen);
+  const hoy=new Date().toISOString().slice(0,10);
+  const inc=firebase.firestore.FieldValue.increment(1);
+  const u={total:inc}; u['dia_'+hoy]=inc; u['origen_'+origen]=inc;
+  db.collection('stats').doc('contadores').set(u,{merge:true}).catch(function(){});
+} }catch(e){}
 function pedirLogin(){ auth.signInWithPopup(prov).catch(e=>alert("No se pudo iniciar sesión: "+e.message)); }
 function logout(){ auth.signOut(); }
 async function guardarFav(){ if(currentUser){ try{ await db.collection("usuarios").doc(currentUser.uid).set({favoritos:[...FAV]},{merge:true}); }catch(e){console.log(e);} } }
