@@ -287,7 +287,7 @@ async function confirmarPedido(){
   const it=Object.values(carrito);let t=0;const items=it.map(function(x){t+=x.qty*x.p.precio;return {cod:x.p.cod,nom:x.p.nom,qty:x.qty,precio:x.p.precio};});
   let txt="Hola! Soy "+nombre+". Quiero hacer este pedido en Rincon Maceda:\n\n";it.forEach(function(x){txt+="• "+x.qty+" x "+x.p.nom+" - "+fmt(x.qty*x.p.precio)+"\n";});txt+="\nTOTAL: "+fmt(t);
   try{ await db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}); }catch(e){console.log('pedido',e);}
-  try{ db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}); }catch(e){}
+  clearTimeout(_ctmr); try{ await db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}); }catch(e){}
   window.open("https://wa.me/"+NUMERO+"?text="+encodeURIComponent(txt),"_blank");
   cerrarPedido();
 }
