@@ -127,7 +127,7 @@ async function getAll(col,order){
 async function cargar(){
   PEDIDOS=await getAll('pedidos','ts');
   CARRITOS=await getAll('carritos','ts');
-  USUARIOS=await getAll('usuarios','ult');
+  USUARIOS=(await getAll('usuarios','ult')).filter(u=>u.id!==ADMIN_UID);
   try{ const s=await db.collection('stats').doc('contadores').get(); STATS=s.exists?s.data():{}; }catch(e){ STATS={}; }
   pintar();
   const d=new Date();document.getElementById('updTxt').textContent="Actualizado "+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
