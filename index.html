@@ -279,17 +279,20 @@ document.getElementById("buscar").oninput=render;
 document.getElementById("enviar").onclick=abrirPedido;
 function abrirPedido(){const it=Object.values(carrito);if(!it.length)return;let t=0;it.forEach(x=>t+=x.qty*x.p.precio);document.getElementById('pmTotal').textContent=fmt(t);document.getElementById('pmNombre').value=localStorage.getItem('rm_nombre')||'';document.getElementById('pmTel').value=localStorage.getItem('rm_tel')||'';document.getElementById('pedidoModal').classList.add('on');document.body.style.overflow='hidden';setTimeout(function(){document.getElementById('pmNombre').focus();},120);}
 function cerrarPedido(){document.getElementById('pedidoModal').classList.remove('on');document.body.style.overflow='';}
-async function confirmarPedido(){
+function confirmarPedido(){
   const nb=document.getElementById('pmNombre');const nombre=nb.value.trim();
   if(!nombre){nb.style.borderColor='#d9534f';nb.focus();return;}
   const tel=document.getElementById('pmTel').value.trim();
   localStorage.setItem('rm_nombre',nombre);localStorage.setItem('rm_tel',tel);
   const it=Object.values(carrito);let t=0;const items=it.map(function(x){t+=x.qty*x.p.precio;return {cod:x.p.cod,nom:x.p.nom,qty:x.qty,precio:x.p.precio};});
   let txt="Hola! Soy "+nombre+". Quiero hacer este pedido en Rincon Maceda:\n\n";it.forEach(function(x){txt+="• "+x.qty+" x "+x.p.nom+" - "+fmt(x.qty*x.p.precio)+"\n";});txt+="\nTOTAL: "+fmt(t);
-  try{ await db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}); }catch(e){console.log('pedido',e);}
-  clearTimeout(_ctmr); try{ await db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}); }catch(e){}
+  // 1) abrir WhatsApp YA, dentro del gesto del click (si se espera antes, el navegador BLOQUEA la apertura)
   window.open("https://wa.me/"+NUMERO+"?text="+encodeURIComponent(txt),"_blank");
   cerrarPedido();
+  // 2) registrar el pedido en segundo plano (sin await, no bloquea la apertura)
+  clearTimeout(_ctmr);
+  try{ db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}).catch(function(){}); }catch(e){}
+  try{ db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}).catch(function(){}); }catch(e){}
 }
 document.getElementById("pmEnviar").onclick=confirmarPedido;
 document.getElementById("pedidoModal").addEventListener("click",function(e){if(e.target.id==='pedidoModal')cerrarPedido();});
