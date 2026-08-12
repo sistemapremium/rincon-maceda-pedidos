@@ -168,6 +168,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,.fav:focus-visible{outl
 <section class=reviews><h3>Lo que dicen nuestros clientes</h3><div class=rev-card id=revCard></div><div class=rev-dots id=revDots></div></section>
 <div id=contador></div>
 <div id=lista></div>
+<div id=sentinela></div>
 <footer class=pie>
   <b>Dónde estamos</b><a class=flink href="https://www.google.com/maps/search/?api=1&query=Av+Francisco+Beiro+3331+CABA" target="_blank" rel="noopener">Av. Francisco Beiró 3331, CABA</a>
   <b>Horarios</b>Lunes a Viernes: 10 a 20 hs · Sábados: 10 a 19 hs · Domingos: cerrado
@@ -318,7 +319,8 @@ setInterval(()=>{ri=(ri+1)%REVIEWS.length;pintarRev();},4800);
 // ---- Volver arriba + sombra al scrollear ----
 const toTop=document.createElement("button");toTop.className="toTop";toTop.setAttribute("aria-label","Volver arriba");toTop.textContent="↑";toTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});document.body.appendChild(toTop);
 const stk=document.querySelector(".sticky-top");
-window.addEventListener("scroll",()=>{const y=window.scrollY||0;toTop.classList.toggle("on",y>700);if(stk)stk.classList.toggle("scrolled",y>4);if(SHOWN<POOL.length && (window.innerHeight+y)>=document.body.offsetHeight-900) mostrarMas();},{passive:true});
+window.addEventListener("scroll",()=>{const y=window.scrollY||0;toTop.classList.toggle("on",y>700);if(stk)stk.classList.toggle("scrolled",y>4);},{passive:true});
+try{ const _sent=document.getElementById('sentinela'); if(_sent && 'IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting) mostrarMas(); },{rootMargin:'900px'}).observe(_sent); } else { window.addEventListener("scroll",function(){ if(SHOWN<POOL.length && (window.innerHeight+(window.scrollY||0))>=document.body.offsetHeight-900) mostrarMas(); },{passive:true}); } }catch(e){}
 
 // ---- Firebase: login Google + favoritos en la nube ----
 const firebaseConfig={apiKey:"AIzaSyBInPQeMu1dCH3leUtCoTZtgbkhrmVXEpI",authDomain:"rincon-maceda.firebaseapp.com",projectId:"rincon-maceda",storageBucket:"rincon-maceda.firebasestorage.app",messagingSenderId:"195196508954",appId:"1:195196508954:web:2d72c13bfecea82f9ceaa3"};
