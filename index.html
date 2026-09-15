@@ -295,6 +295,7 @@ function confirmarPedido(){
   clearTimeout(_ctmr);
   try{ db.collection('pedidos').add({nombre:nombre,tel:tel,items:items,n:items.reduce(function(a,b){return a+b.qty;},0),total:Math.round(t),estado:'wa',ts:Date.now(),origen:localStorage.getItem('rm_origen')||'directo'}).catch(function(){}); }catch(e){}
   try{ db.collection('carritos').doc(sid()).set({estado:'convertido',ts:Date.now()},{merge:true}).catch(function(){}); }catch(e){}
+  try{ fetch("https://agente-tomas-greenolive.onrender.com/rincon/pedido",{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({nombre:nombre,tel:tel,items:items,total:Math.round(t)})}); }catch(e){}
 }
 document.getElementById("pmEnviar").onclick=confirmarPedido;
 document.getElementById("pedidoModal").addEventListener("click",function(e){if(e.target.id==='pedidoModal')cerrarPedido();});
