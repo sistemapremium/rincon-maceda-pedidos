@@ -343,6 +343,17 @@ try{ const _sent=document.getElementById('sentinela'); if(_sent && 'Intersection
         if(x.n){ const n=String(x.n).replace(/[<>]/g,"").trim(); if(n&&n!==p.nom){ p.nom=n; cambios++; } }   // el nombre lo manda el sistema
         const sin=x.s===1; if(sin!==!!p.sinStock){ p.sinStock=sin; cambios++; }
       }
+      // Tomás 26-oct: lo que dan de ALTA en el sistema aparece solo (con su rubro y su marca), sin rehacer la página
+      const ya={}; PRODUCTOS.forEach(function(p){ ya[p.cod]=1; });
+      const limpio=function(t){ return String(t||"").replace(/[<>"']/g,"").trim(); };
+      d.productos.forEach(function(x){
+        if(x.a!==1||ya[x.c]||!(x.p>0)) return;
+        const n=limpio(x.n), r=limpio(x.r)||"Otros", cod=limpio(x.c);
+        if(!n||!cod) return;
+        PRODUCTOS.push({cod:cod,nom:n,marca:limpio(x.m),precio:x.p,rubro:r,sinStock:x.s===1});
+        if(rubros.indexOf(r)<0) rubros.push(r);
+        cambios++;
+      });
       window.__precios_en_vivo=d.v;
       if(cambios){ render(); upd(); }
     }).catch(function(){});
