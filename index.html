@@ -226,7 +226,7 @@ function qtyHTML(cod,c){
 function pintarQty(cod){const el=document.getElementById("qty_"+cod);if(el)el.innerHTML=qtyHTML(cod,carrito[cod]?carrito[cod].qty:0);}
 function tarjeta(p){
   const cant=carrito[p.cod]?carrito[p.cod].qty:0;
-  const foto=p.img||FOTOS_DB[p.cod]||null;
+  const foto=p.img||FOTOS_DB[p.cod]||p.fotoTN||null;
   const d=document.createElement("div");d.className="prod";
   const alt=(p.nom||"").replace(/"/g,"");
   const media=foto?("<img class=foto loading=lazy alt=\""+alt+"\" src='"+foto+"' onclick=\"event.stopPropagation();abrirFoto(this.src)\"><span class=zoomhint><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><path d='M21 21l-3.5-3.5M11 8.5v5M8.5 11h5'/></svg></span>"):(ICON[p.rubro]||ICON['Otros']);
@@ -340,6 +340,7 @@ try{ const _sent=document.getElementById('sentinela'); if(_sent && 'Intersection
         if(!x) continue;
         if(x.a===0){ if(!carrito[p.cod]){ PRODUCTOS.splice(i,1); cambios++; } continue; }
         if(x.p>0&&x.p!==p.precio){ p.precio=x.p; cambios++; }
+        if(x.f&&!p.fotoTN){ const f=String(x.f); if(/^[\w.\-\/%]+$/.test(f)||f.indexOf("https://")===0){ p.fotoTN=f.indexOf("https://")===0?f:"https://dcdn-us.mitiendanube.com/stores/007/545/670/products/"+f; if(!p.img&&!FOTOS_DB[p.cod]) cambios++; } }   // Tomás 31-oct: la foto de la Tienda Nube
         if(x.n){ const n=String(x.n).replace(/[<>]/g,"").trim(); if(n&&n!==p.nom){ p.nom=n; cambios++; } }   // el nombre lo manda el sistema
         const sin=x.s===1; if(sin!==!!p.sinStock){ p.sinStock=sin; cambios++; }
       }
@@ -350,7 +351,7 @@ try{ const _sent=document.getElementById('sentinela'); if(_sent && 'Intersection
         if(x.a!==1||ya[x.c]||!(x.p>0)) return;
         const n=limpio(x.n), r=limpio(x.r)||"Otros", cod=limpio(x.c);
         if(!n||!cod) return;
-        PRODUCTOS.push({cod:cod,nom:n,marca:limpio(x.m),precio:x.p,rubro:r,sinStock:x.s===1});
+        const ft=x.f?String(x.f):""; PRODUCTOS.push({cod:cod,nom:n,marca:limpio(x.m),precio:x.p,rubro:r,sinStock:x.s===1,fotoTN:ft?(ft.indexOf("https://")===0?ft:"https://dcdn-us.mitiendanube.com/stores/007/545/670/products/"+ft):""});
         if(rubros.indexOf(r)<0) rubros.push(r);
         cambios++;
       });
